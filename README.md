@@ -101,17 +101,19 @@ To reduce variance in Monte Carlo estimation.
 ---
 
 ## 📁 Project Structure
-![structure](structure.png)
-
+[
+](https://github.com/halim-quantlab/option-pricing-engine-cpp/blob/main/image/structure.png?raw=true)<img width="624" height="794" alt="image" src="https://github.com/user-attachments/assets/050272bc-9f4b-4956-bcfc-158a212821fa" />
 ---
 ## Input
-![input](input.png)
+[
+](https://github.com/halim-quantlab/option-pricing-engine-cpp/blob/main/image/image.png?raw=true)<img width="384" height="358" alt="image" src="https://github.com/user-attachments/assets/8d202f08-80da-41ba-b3d3-4856664e268c" />
 
 ---
 
 ## Example Output
-![output](output.png)
 
+[
+](https://github.com/halim-quantlab/option-pricing-engine-cpp/blob/main/image/output.png?raw=true)<img width="1311" height="735" alt="image" src="https://github.com/user-attachments/assets/064f827f-fcf8-4722-bd1b-9d7aab46650e" />
 ---
 ### Compile
 ```bash
