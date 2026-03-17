@@ -114,25 +114,30 @@ To reduce variance in Monte Carlo estimation.
 
 [
 ](https://github.com/halim-quantlab/option-pricing-engine-cpp/blob/main/image/output.png?raw=true)<img width="1311" height="735" alt="image" src="https://github.com/user-attachments/assets/064f827f-fcf8-4722-bd1b-9d7aab46650e" />
+
 ---
-### Compile
-```bash
+## Compile
 g++ -std=c++17 main.cpp src/math_utils.cpp src/black_scholes.cpp src/monte_carlo.cpp src/analysis.cpp -o option_engine
 ./option_engine
 
 ---
- 🎯 Key Learnings
+## 🎯 Key Learnings
 	•	Built a modular C++ derivatives pricing engine
 	•	Implemented stochastic simulation with GBM
 	•	Applied Monte Carlo variance reduction
 	•	Validated numerical methods against analytical pricing
 	•	Performed convergence and runtime analysis
 	•	Structured the codebase using reusable headers and source files
+---
 
-👤 Author
-Wielly Halim
-Aspiring Quant Researcher | C++ & Python | Derivatives Pricing
+## 👤 Author
 
-⭐ Support
+Wielly Halim  
+Aspiring Quant Researcher | C++ & Python | Derivatives Pricing  
+
+---
+
+## ⭐ Support
+
 If you found this project insightful, consider starring the repository.
 
