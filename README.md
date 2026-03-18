@@ -130,14 +130,63 @@ g++ -std=c++17 main.cpp src/math_utils.cpp src/black_scholes.cpp src/monte_carlo
 	•	Structured the codebase using reusable headers and source files
 ---
 
-## 👤 Author
+🧩 Model Interpretation
 
-Wielly Halim  
-Aspiring Quant Researcher | C++ & Python | Derivatives Pricing  
+Black-Scholes Assumptions
+	•	Asset follows Geometric Brownian Motion (GBM)
+	•	Constant volatility
+	•	Constant risk-free rate
+	•	Continuous dividend yield
+	•	No arbitrage opportunities
+	•	Frictionless markets (no transaction cost, perfect liquidity)
+	•	Continuous trading
+	•	Lognormal return distribution
 
----
+⸻
 
-## ⭐ Support
+When Black-Scholes Breaks
+	•	Volatility is not constant (volatility smile/skew)
+	•	Sudden jumps (earnings, macro shocks) violate GBM
+	•	Interest rates and dividends change over time
+	•	Transaction costs and liquidity constraints exist
+	•	Discrete hedging introduces errors
+	•	Not suitable for path-dependent options like arithmetic Asian
+
+⸻
+
+Monte Carlo Assumptions
+	•	Underlying follows GBM
+	•	Random variables are normally distributed
+	•	Large number of simulations ensures convergence
+	•	Constant discount rate
+
+⸻
+
+Monte Carlo Limitations
+	•	Model risk persists (depends on GBM assumption)
+	•	Slow convergence for high accuracy
+	•	High computational cost
+	•	Tail risks may be underrepresented
+	•	No closed-form benchmark for some exotic options
+
+🚀 Future Improvements
+
+Pricing Models
+	•	Binomial Tree
+	•	Trinomial Tree
+	•	Barrier Options
+	•	Lookback Options
+	•	Digital Options
+
+This project is designed as a foundational quantitative finance engine for:
+	•	Understanding derivatives pricing
+	•	Comparing analytical vs numerical methods
+	•	Studying Monte Carlo convergence
+	•	Building reusable C++ quant infrastructure
+
+👤 Author
+Wielly Halim
+Aspiring Quant Researcher | C++ & Python | Derivatives Pricing
 
 If you found this project insightful, consider starring the repository.
 

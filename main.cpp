@@ -1,3 +1,24 @@
+// ============================================================
+// 📈 Option Pricing Engine - Main Driver
+// ------------------------------------------------------------
+// This program serves as the interactive CLI interface for a 
+// modular derivatives pricing engine.
+//
+// Key Responsibilities:
+// - Collect and validate user inputs
+// - Route execution to selected pricing method
+// - Display pricing results, Greeks, and diagnostics
+// - Perform validation checks (e.g. call-put parity)
+// - Provide convergence, variance reduction, and benchmarking analysis
+//
+// Design Philosophy:
+// - Separate concerns (input / pricing / analysis)
+// - Ensure robustness via validation and error handling
+// - Provide transparency into model performance and limitations
+//
+// Author: Wielly Halim
+// ============================================================
+
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
@@ -10,6 +31,10 @@
 #include "include/monte_carlo.hpp"
 #include "include/analysis.hpp"
 
+// ------------------------------------------------------------
+// Utility: Enum → String conversion
+// Improves readability of CLI output for user interpretation
+// ------------------------------------------------------------
 std::string to_string(OptionType type) {
     if (type == OptionType::Call) return "Call";
     return "Put";
@@ -25,6 +50,10 @@ std::string to_string(PayoffStyle style) {
     return "Asian";
 }
 
+// ------------------------------------------------------------
+// Robust input handlers
+// Ensures numerical stability and prevents invalid input crashes
+// ------------------------------------------------------------
 double get_double_input(const std::string& prompt) {
     double value;
     while (true) {
@@ -32,6 +61,7 @@ double get_double_input(const std::string& prompt) {
         std::cin >> value;
 
         if (std::cin.fail()) {
+            // Clear error state and discard invalid input
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid input. Please enter a numeric value.\n";
@@ -57,6 +87,10 @@ int get_int_input(const std::string& prompt) {
     }
 }
 
+// ------------------------------------------------------------
+// Boolean input for enabling optional features
+// (e.g. variance reduction techniques)
+// ------------------------------------------------------------
 bool get_yes_no_input(const std::string& prompt) {
     char choice;
     while (true) {
@@ -70,6 +104,10 @@ bool get_yes_no_input(const std::string& prompt) {
     }
 }
 
+// ------------------------------------------------------------
+// Pricing method selection
+// Ensures user explicitly chooses between analytical vs simulation
+// ------------------------------------------------------------
 PricingMethod get_pricing_method() {
     int choice;
     while (true) {
@@ -89,6 +127,10 @@ PricingMethod get_pricing_method() {
     }
 }
 
+// ------------------------------------------------------------
+// Payoff selection logic
+// Note: Black-Scholes only supports European options
+// ------------------------------------------------------------
 PayoffStyle get_payoff_style(PricingMethod method) {
     if (method == PricingMethod::BlackScholes) {
         std::cout << "\nBlack-Scholes only supports European options.\n";
@@ -113,6 +155,9 @@ PayoffStyle get_payoff_style(PricingMethod method) {
     }
 }
 
+// ------------------------------------------------------------
+// Option type selection (Call / Put)
+// ------------------------------------------------------------
 OptionType get_option_type() {
     int choice;
     while (true) {
@@ -132,6 +177,10 @@ OptionType get_option_type() {
     }
 }
 
+// ------------------------------------------------------------
+// Parameter validation
+// Critical for numerical stability and avoiding undefined behavior
+// ------------------------------------------------------------
 void validate_parameters(const OptionParameters& params) {
     if (params.S0 <= 0.0) throw std::invalid_argument("S0 must be positive.");
     if (params.K <= 0.0) throw std::invalid_argument("K must be positive.");
@@ -147,6 +196,9 @@ void validate_parameters(const OptionParameters& params) {
     }
 }
 
+// ------------------------------------------------------------
+// Collect all user inputs into structured parameter object
+// ------------------------------------------------------------
 OptionParameters get_user_parameters() {
     OptionParameters params{};
 
@@ -181,6 +233,10 @@ OptionParameters get_user_parameters() {
     return params;
 }
 
+// ------------------------------------------------------------
+// Print structured summary of input parameters
+// Improves transparency and reproducibility
+// ------------------------------------------------------------
 void print_header(const OptionParameters& params) {
     std::cout << "\nOption Pricing Engine\n";
     std::cout << "---------------------\n";
@@ -204,6 +260,10 @@ void print_header(const OptionParameters& params) {
     }
 }
 
+// ------------------------------------------------------------
+// Convergence diagnostics
+// Shows how Monte Carlo estimator approaches analytical solution
+// ------------------------------------------------------------
 void print_convergence_table(const ConvergenceResult& conv_result) {
     std::cout << "\nMonte Carlo Convergence Analysis\n";
     std::cout << "--------------------------------\n";
@@ -228,6 +288,9 @@ void print_convergence_table(const ConvergenceResult& conv_result) {
     }
 }
 
+// ------------------------------------------------------------
+// Main execution flow
+// ------------------------------------------------------------
 int main() {
     try {
         std::cout << std::fixed << std::setprecision(6);
@@ -237,6 +300,7 @@ int main() {
 
         print_header(params);
 
+        // ---------------- Black-Scholes ----------------
         if (params.pricing_method == PricingMethod::BlackScholes) {
             BlackScholesResult bs = BlackScholes::full_result(params);
 
@@ -249,16 +313,15 @@ int main() {
             std::cout << "Theta        : " << bs.theta << "\n";
             std::cout << "Rho          : " << bs.rho << "\n";
 
+            // Financial sanity check
             ParityResult parity = BlackScholes::call_put_parity(params);
 
             std::cout << "\nCall-Put Parity Check\n";
             std::cout << "---------------------\n";
-            std::cout << "Call Price   : " << parity.call_price << "\n";
-            std::cout << "Put Price    : " << parity.put_price << "\n";
-            std::cout << "LHS (C - P)  : " << parity.lhs << "\n";
-            std::cout << "RHS          : " << parity.rhs << "\n";
             std::cout << "Difference   : " << parity.difference << "\n";
         }
+
+        // ---------------- Monte Carlo ----------------
         else if (params.pricing_method == PricingMethod::MonteCarlo) {
             MCSummary result = MonteCarlo::price(params);
 
@@ -266,57 +329,39 @@ int main() {
             std::cout << "------------------\n";
             std::cout << "Price        : " << result.price << "\n";
             std::cout << "Std Error    : " << result.std_error << "\n";
-            std::cout << "95% CI Low   : " << result.ci_low << "\n";
-            std::cout << "95% CI High  : " << result.ci_high << "\n";
+            std::cout << "95% CI       : [" << result.ci_low << ", " << result.ci_high << "]\n";
 
+            // Additional diagnostics for European options
             if (params.payoff_style == PayoffStyle::European) {
-                MCParityResult parity = MonteCarlo::call_put_parity(params);
 
-                std::cout << "\nMonte Carlo Call-Put Parity Check\n";
-                std::cout << "---------------------------------\n";
-                std::cout << "Call Price   : " << parity.call_price << "\n";
-                std::cout << "Call SE      : " << parity.call_std_error << "\n";
-                std::cout << "Put Price    : " << parity.put_price << "\n";
-                std::cout << "Put SE       : " << parity.put_std_error << "\n";
-                std::cout << "LHS (C - P)  : " << parity.lhs << "\n";
-                std::cout << "RHS          : " << parity.rhs << "\n";
-                std::cout << "Difference   : " << parity.difference << "\n";
-
+                // Compare analytical vs numerical pricing
                 ComparisonResult comp = Analysis::compare_black_scholes_vs_monte_carlo(params);
 
-                std::cout << "\nBlack-Scholes vs Monte Carlo Comparison\n";
-                std::cout << "---------------------------------------\n";
-                std::cout << "Black-Scholes Price : " << comp.black_scholes_price << "\n";
-                std::cout << "Monte Carlo Price   : " << comp.monte_carlo_price << "\n";
-                std::cout << "Monte Carlo SE      : " << comp.monte_carlo_std_error << "\n";
-                std::cout << "Absolute Error      : " << comp.abs_error << "\n";
-                std::cout << "Relative Error (%)  : " << comp.rel_error_pct << "\n";
+                std::cout << "\nModel Comparison\n";
+                std::cout << "----------------\n";
+                std::cout << "Absolute Error  : " << comp.abs_error << "\n";
+                std::cout << "Relative Error (%) : " << comp.rel_error_pct << "\n";
 
+                // Convergence analysis
                 std::vector<int> simulation_grid = {1000, 5000, 10000, 50000, 100000};
                 ConvergenceResult conv_result = Analysis::monte_carlo_convergence(params, simulation_grid);
                 print_convergence_table(conv_result);
 
+                // Variance reduction effectiveness
                 VarianceReductionResult vr = Analysis::compare_standard_vs_antithetic(params);
 
-                std::cout << "\nVariance Reduction: Standard vs Antithetic\n";
-                std::cout << "------------------------------------------\n";
-                std::cout << "Standard MC Price       : " << vr.standard_price << "\n";
-                std::cout << "Standard MC Std Error   : " << vr.standard_se << "\n";
-                std::cout << "Antithetic MC Price     : " << vr.antithetic_price << "\n";
-                std::cout << "Antithetic MC Std Error : " << vr.antithetic_se << "\n";
-                std::cout << "SE Reduction (%)        : " << vr.se_reduction_pct << "\n";
+                std::cout << "\nVariance Reduction Efficiency\n";
+                std::cout << "------------------------------\n";
+                std::cout << "SE Reduction (%) : " << vr.se_reduction_pct << "\n";
 
+                // Performance benchmarking
                 BenchmarkResult bench = Analysis::benchmark_pricing_engines(params);
 
                 std::cout << "\nRuntime Benchmark\n";
                 std::cout << "-----------------\n";
-                std::cout << "Black-Scholes Runtime (us)          : " << bench.black_scholes_us << "\n";
-                std::cout << "Monte Carlo Standard Runtime (ms)   : " << bench.monte_carlo_standard_ms << "\n";
-                std::cout << "Monte Carlo Antithetic Runtime (ms) : " << bench.monte_carlo_antithetic_ms << "\n";
+                std::cout << "BS (us)  : " << bench.black_scholes_us << "\n";
+                std::cout << "MC (ms)  : " << bench.monte_carlo_standard_ms << "\n";
             }
-        }
-        else {
-            throw std::invalid_argument("Unsupported pricing method.");
         }
     }
     catch (const std::exception& e) {
