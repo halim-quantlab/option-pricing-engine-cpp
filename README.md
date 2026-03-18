@@ -132,7 +132,7 @@ g++ -std=c++17 main.cpp src/math_utils.cpp src/black_scholes.cpp src/monte_carlo
 
 🧩 Model Interpretation
 
-Black-Scholes Assumptions
+### Black-Scholes Assumptions
 	- Asset follows Geometric Brownian Motion (GBM)
 	- Constant volatility
 	- Constant risk-free rate
@@ -144,7 +144,7 @@ Black-Scholes Assumptions
 
 ⸻
 
-When Black-Scholes Breaks
+### When Black-Scholes Breaks
 	- Volatility is not constant (volatility smile/skew)
 	- Sudden jumps (earnings, macro shocks) violate GBM
 	- Interest rates and dividends change over time
@@ -154,7 +154,7 @@ When Black-Scholes Breaks
 
 ⸻
 
-Monte Carlo Assumptions
+### Monte Carlo Assumptions
 	- Underlying follows GBM
 	- Random variables are normally distributed
 	- Large number of simulations ensures convergence
@@ -162,7 +162,7 @@ Monte Carlo Assumptions
 
 ⸻
 
-Monte Carlo Limitations
+### Monte Carlo Limitations
 	- Model risk persists (depends on GBM assumption)
 	- Slow convergence for high accuracy
 	- High computational cost
@@ -171,14 +171,14 @@ Monte Carlo Limitations
 
 🚀 Future Improvements
 
-Pricing Models
+### Pricing Models
 	- Binomial Tree
 	- Trinomial Tree
 	- Barrier Options
 	- Lookback Options
 	- Digital Options
 
-This project is designed as a foundational quantitative finance engine for:
+### This project is designed as a foundational quantitative finance engine for:
 	- Understanding derivatives pricing
 	- Comparing analytical vs numerical methods
 	- Studying Monte Carlo convergence
